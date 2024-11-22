@@ -1,66 +1,128 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Documentação do Sistema Loja de Ferramentas
+Esta documentação descreve a estrutura, funcionalidade e propósito dos controladores e modelos utilizados no sistema, baseado na plataforma Laravel. O objetivo é fornecer uma visão clara e detalhada do funcionamento do sistema.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+1. Controladores
+1.1 CarrinhoController
+Este controlador gerencia as operações relacionadas ao carrinho de compras do usuário.
 
-## About Laravel
+Função: add
+Descrição: Adiciona um produto ao carrinho do usuário autenticado.
+Parâmetros de entrada:
+Request $request: Contém os dados enviados pelo formulário, como a quantidade.
+Produto $produto: Representa o produto a ser adicionado.
+Validação:
+quantidade deve ser:
+Obrigatório (required).
+Numérico (numeric).
+Valor mínimo de 1 (min:1).
+Lógica:
+Os dados são validados.
+O produto é associado ao usuário autenticado via Auth::id().
+Os dados são salvos na tabela carrinhos.
+O usuário é redirecionado para a página do produto com uma mensagem de sucesso.
+Mensagem exibida: "Produto adicionado ao Carrinho."
+1.2 DashboardController
+Este controlador gerencia a exibição da dashboard dos usuários.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Função: index
+Descrição: Lista produtos com funcionalidade de pesquisa.
+Parâmetros de entrada:
+Request $request: Contém a palavra-chave de pesquisa.
+Lógica:
+Verifica se há um termo de busca.
+Filtra produtos cujos campos (nome, descricao, ou categoria) contenham o termo.
+Retorna a view usuarios.dashboard com os produtos filtrados.
+Funcionalidade especial:
+Utiliza o método when para aplicar filtros de forma condicional.
+1.3 HomeController
+Gerencia a página inicial do sistema.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Função: index
+Descrição: Exibe os 5 produtos mais recentes.
+Lógica:
+Busca os 5 produtos mais recentes no banco de dados com o método take(5).
+Retorna a view home com os produtos.
+1.4 ProdutoController
+Gerencia todas as operações CRUD relacionadas aos produtos.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Função: index
+Descrição: Lista todos os produtos cadastrados.
+Lógica: Retorna a view produtos.index com todos os produtos.
+Função: create
+Descrição: Exibe o formulário para cadastrar um novo produto.
+Lógica: Retorna a view produtos.create.
+Função: store
+Descrição: Armazena os dados do formulário no banco de dados.
+Validação:
+nome: Obrigatório, texto, máximo 255 caracteres.
+descricao, categoria: Obrigatórios.
+quantidade, preco: Obrigatórios, numéricos.
+Lógica:
+Valida os dados do formulário.
+Salva os dados no banco com Produto::create().
+Redireciona para a lista de produtos com mensagem de sucesso.
+Função: edit
+Descrição: Exibe o formulário de edição de um produto.
+Parâmetros de entrada:
+Produto $produto: Representa o produto a ser editado.
+Lógica: Retorna a view produtos.edit com os dados do produto.
+Função: update
+Descrição: Atualiza os dados do produto no banco de dados.
+Lógica:
+Valida os dados recebidos.
+Atualiza as informações do produto com $produto->update().
+Redireciona para a lista de produtos com mensagem de sucesso.
+Função: destroy
+Descrição: Remove um produto do banco de dados.
+Parâmetros de entrada:
+Produto $produto: Representa o produto a ser excluído.
+Lógica:
+Exclui o produto.
+Redireciona para a lista de produtos com mensagem de sucesso.
+Função: show
+Descrição: Exibe os detalhes de um produto específico.
+Parâmetros de entrada:
+Produto $produto: Produto cujas informações serão exibidas.
+Lógica: Retorna a view produtos.show com os dados do produto.
+2. Modelos
+2.1 Modelo: Carrinho
+Gerencia as interações com a tabela carrinhos.
 
-## Learning Laravel
+Atributos:
+id_produto: Identifica o produto adicionado ao carrinho.
+id_user: Identifica o usuário dono do carrinho.
+quantidade: Armazena a quantidade do produto no carrinho.
+status: Representa o estado atual do item no carrinho.
+Propriedade $fillable:
+Permite atribuição em massa dos atributos listados:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+id_produto, id_user, quantidade, status.
+2.2 Modelo: Produto
+Representa a tabela de produtos no banco de dados.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Atributos (não explicitados no trecho fornecido):
+id: Identificador único do produto.
+nome: Nome do produto.
+descricao: Descrição do produto.
+categoria: Categoria à qual o produto pertence.
+quantidade: Quantidade disponível.
+preco: Preço do produto.
+3. Banco de Dados
+Tabelas Principais
+Produtos
+Armazena informações de todos os produtos.
+Carrinhos
+Armazena informações sobre os itens adicionados ao carrinho pelos usuários.
+4. Funcionalidades
+Usuário:
+Pesquisar produtos: Busca por nome, descrição ou categoria.
+Adicionar ao carrinho: Inscreve produtos e quantidade.
+Visualizar produtos recentes: Exibe novidades na página inicial.
+Administrador:
+CRUD completo: Gerencia produtos (adicionar, editar, remover).
+Visualizar listagens: Acompanha produtos e atualiza informações.
+5. Mensagens de Sucesso
+Produto criado com sucesso: Após cadastro.
+Produto atualizado com sucesso: Após edição.
+Produto deletado com sucesso: Após exclusão.
+Produto adicionado ao Carrinho: Após inclusão no carrinho.
